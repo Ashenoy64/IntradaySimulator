@@ -1,0 +1,15 @@
+# TODO
+- Runner Class
+- Metrics Calculator
+- Develop algorithms
+- Simple Integrated system
+- Collect Intraday Stocks trends
+- System to train the models
+- Run algorithms on trends to collect actions
+- Collect data for actions [ If action was right or wrong ]
+- Train Model
+    - Decision
+    - Next trend in sequence
+- ML Model for confidence score addition with Action resolution
+- Test the Profits imporvment if any
+- Include brokrage account to carry out
