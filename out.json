@@ -1,0 +1,287 @@
+{
+    "TATASTEEL.NS": {
+        "emar": {
+            "invested_start": 10000.0,
+            "funds_left": 9925.23991394043,
+            "holding_qnt": 0,
+            "holding_avgprice": 0,
+            "market_close": 160.1300048828125,
+            "holding_value": 0,
+            "holding_sellvalue": 0.0,
+            "net_holdingvalue": 9925.23991394043,
+            "net_holding_sellvalue": 9925.23991394043
+        },
+        "rsi": {
+            "invested_start": 10000.0,
+            "funds_left": 10000,
+            "holding_qnt": 0,
+            "holding_avgprice": 0.0,
+            "market_close": 160.1300048828125,
+            "holding_value": 0.0,
+            "holding_sellvalue": 0.0,
+            "net_holdingvalue": 10000.0,
+            "net_holding_sellvalue": 10000.0
+        },
+        "macd": {
+            "invested_start": 10000.0,
+            "funds_left": 9950.930755615234,
+            "holding_qnt": 0,
+            "holding_avgprice": 0,
+            "market_close": 160.1300048828125,
+            "holding_value": 0,
+            "holding_sellvalue": 0.0,
+            "net_holdingvalue": 9950.930755615234,
+            "net_holding_sellvalue": 9950.930755615234
+        },
+        "momentum": {
+            "invested_start": 10000.0,
+            "funds_left": 9909.720840454102,
+            "holding_qnt": 0,
+            "holding_avgprice": 0,
+            "market_close": 160.1300048828125,
+            "holding_value": 0,
+            "holding_sellvalue": 0.0,
+            "net_holdingvalue": 9909.720840454102,
+            "net_holding_sellvalue": 9909.720840454102
+        },
+        "ai": {
+            "invested_start": 10000.0,
+            "funds_left": 10000,
+            "holding_qnt": 0,
+            "holding_avgprice": 0.0,
+            "market_close": 160.1300048828125,
+            "holding_value": 0.0,
+            "holding_sellvalue": 0.0,
+            "net_holdingvalue": 10000.0,
+            "net_holding_sellvalue": 10000.0
+        }
+    },
+    "RELIANCE.NS": {
+        "emar": {
+            "invested_start": 10000.0,
+            "funds_left": 10044.0986328125,
+            "holding_qnt": 0,
+            "holding_avgprice": 0,
+            "market_close": 1380.0,
+            "holding_value": 0,
+            "holding_sellvalue": 0.0,
+            "net_holdingvalue": 10044.0986328125,
+            "net_holding_sellvalue": 10044.0986328125
+        },
+        "rsi": {
+            "invested_start": 10000.0,
+            "funds_left": 10000,
+            "holding_qnt": 0,
+            "holding_avgprice": 0.0,
+            "market_close": 1380.0,
+            "holding_value": 0.0,
+            "holding_sellvalue": 0.0,
+            "net_holdingvalue": 10000.0,
+            "net_holding_sellvalue": 10000.0
+        },
+        "macd": {
+            "invested_start": 10000.0,
+            "funds_left": 9930.0,
+            "holding_qnt": 0,
+            "holding_avgprice": 0,
+            "market_close": 1380.0,
+            "holding_value": 0,
+            "holding_sellvalue": 0.0,
+            "net_holdingvalue": 9930.0,
+            "net_holding_sellvalue": 9930.0
+        },
+        "momentum": {
+            "invested_start": 10000.0,
+            "funds_left": 9977.599487304688,
+            "holding_qnt": 0,
+            "holding_avgprice": 0,
+            "market_close": 1380.0,
+            "holding_value": 0,
+            "holding_sellvalue": 0.0,
+            "net_holdingvalue": 9977.599487304688,
+            "net_holding_sellvalue": 9977.599487304688
+        },
+        "ai": {
+            "invested_start": 10000.0,
+            "funds_left": 10000,
+            "holding_qnt": 0,
+            "holding_avgprice": 0.0,
+            "market_close": 1380.0,
+            "holding_value": 0.0,
+            "holding_sellvalue": 0.0,
+            "net_holdingvalue": 10000.0,
+            "net_holding_sellvalue": 10000.0
+        }
+    },
+    "HDFCBANK.NS": {
+        "emar": {
+            "invested_start": 10000.0,
+            "funds_left": 10009.000244140625,
+            "holding_qnt": 0,
+            "holding_avgprice": 0,
+            "market_close": 1969.9000244140625,
+            "holding_value": 0,
+            "holding_sellvalue": 0.0,
+            "net_holdingvalue": 10009.000244140625,
+            "net_holding_sellvalue": 10009.000244140625
+        },
+        "rsi": {
+            "invested_start": 10000.0,
+            "funds_left": 10000,
+            "holding_qnt": 0,
+            "holding_avgprice": 0.0,
+            "market_close": 1969.9000244140625,
+            "holding_value": 0.0,
+            "holding_sellvalue": 0.0,
+            "net_holdingvalue": 10000.0,
+            "net_holding_sellvalue": 10000.0
+        },
+        "macd": {
+            "invested_start": 10000.0,
+            "funds_left": 9990.0,
+            "holding_qnt": 0,
+            "holding_avgprice": 0,
+            "market_close": 1969.9000244140625,
+            "holding_value": 0,
+            "holding_sellvalue": 0.0,
+            "net_holdingvalue": 9990.0,
+            "net_holding_sellvalue": 9990.0
+        },
+        "momentum": {
+            "invested_start": 10000.0,
+            "funds_left": 9996.500244140625,
+            "holding_qnt": 0,
+            "holding_avgprice": 0,
+            "market_close": 1969.9000244140625,
+            "holding_value": 0,
+            "holding_sellvalue": 0.0,
+            "net_holdingvalue": 9996.500244140625,
+            "net_holding_sellvalue": 9996.500244140625
+        },
+        "ai": {
+            "invested_start": 10000.0,
+            "funds_left": 10000,
+            "holding_qnt": 0,
+            "holding_avgprice": 0.0,
+            "market_close": 1969.9000244140625,
+            "holding_value": 0.0,
+            "holding_sellvalue": 0.0,
+            "net_holdingvalue": 10000.0,
+            "net_holding_sellvalue": 10000.0
+        }
+    },
+    "TATAMOTORS.NS": {
+        "emar": {
+            "invested_start": 10000.0,
+            "funds_left": 211.74835205078125,
+            "holding_qnt": 15,
+            "holding_avgprice": 655.1500244140625,
+            "market_close": 655.0,
+            "holding_value": 9827.250366210938,
+            "holding_sellvalue": 9825.0,
+            "net_holdingvalue": 10038.998718261719,
+            "net_holding_sellvalue": 10036.748352050781
+        },
+        "rsi": {
+            "invested_start": 10000.0,
+            "funds_left": 10000,
+            "holding_qnt": 0,
+            "holding_avgprice": 0.0,
+            "market_close": 655.0,
+            "holding_value": 0.0,
+            "holding_sellvalue": 0.0,
+            "net_holdingvalue": 10000.0,
+            "net_holding_sellvalue": 10000.0
+        },
+        "macd": {
+            "invested_start": 10000.0,
+            "funds_left": 9935.501098632812,
+            "holding_qnt": 0,
+            "holding_avgprice": 0,
+            "market_close": 655.0,
+            "holding_value": 0,
+            "holding_sellvalue": 0.0,
+            "net_holdingvalue": 9935.501098632812,
+            "net_holding_sellvalue": 9935.501098632812
+        },
+        "momentum": {
+            "invested_start": 10000.0,
+            "funds_left": 9954.251098632812,
+            "holding_qnt": 0,
+            "holding_avgprice": 0,
+            "market_close": 655.0,
+            "holding_value": 0,
+            "holding_sellvalue": 0.0,
+            "net_holdingvalue": 9954.251098632812,
+            "net_holding_sellvalue": 9954.251098632812
+        },
+        "ai": {
+            "invested_start": 10000.0,
+            "funds_left": 10000,
+            "holding_qnt": 0,
+            "holding_avgprice": 0.0,
+            "market_close": 655.0,
+            "holding_value": 0.0,
+            "holding_sellvalue": 0.0,
+            "net_holdingvalue": 10000.0,
+            "net_holding_sellvalue": 10000.0
+        }
+    },
+    "ADANIENT.NS": {
+        "emar": {
+            "invested_start": 10000.0,
+            "funds_left": 801.6005859375,
+            "holding_qnt": 4,
+            "holding_avgprice": 2289.60009765625,
+            "market_close": 2292.0,
+            "holding_value": 9158.400390625,
+            "holding_sellvalue": 9168.0,
+            "net_holdingvalue": 9960.0009765625,
+            "net_holding_sellvalue": 9969.6005859375
+        },
+        "rsi": {
+            "invested_start": 10000.0,
+            "funds_left": 10000,
+            "holding_qnt": 0,
+            "holding_avgprice": 0.0,
+            "market_close": 2292.0,
+            "holding_value": 0.0,
+            "holding_sellvalue": 0.0,
+            "net_holdingvalue": 10000.0,
+            "net_holding_sellvalue": 10000.0
+        },
+        "macd": {
+            "invested_start": 10000.0,
+            "funds_left": 10028.7998046875,
+            "holding_qnt": 0,
+            "holding_avgprice": 0,
+            "market_close": 2292.0,
+            "holding_value": 0,
+            "holding_sellvalue": 0.0,
+            "net_holdingvalue": 10028.7998046875,
+            "net_holding_sellvalue": 10028.7998046875
+        },
+        "momentum": {
+            "invested_start": 10000.0,
+            "funds_left": 807.9990234375,
+            "holding_qnt": 4,
+            "holding_avgprice": 2291.0,
+            "market_close": 2292.0,
+            "holding_value": 9164.0,
+            "holding_sellvalue": 9168.0,
+            "net_holdingvalue": 9971.9990234375,
+            "net_holding_sellvalue": 9975.9990234375
+        },
+        "ai": {
+            "invested_start": 10000.0,
+            "funds_left": 10000,
+            "holding_qnt": 0,
+            "holding_avgprice": 0.0,
+            "market_close": 2292.0,
+            "holding_value": 0.0,
+            "holding_sellvalue": 0.0,
+            "net_holdingvalue": 10000.0,
+            "net_holding_sellvalue": 10000.0
+        }
+    }
+}

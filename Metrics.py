@@ -519,3 +519,6 @@ class VolumeAvg(SingleMetricsBase):
         if len(self.window) < self.N:
             return (self.key, 0.0)
         return (self.key, self.sum_vol / self.N)
+
+# sma, ema, TypicalPrice, VWMA, VolumeAvg,bollingerbands, rsi, 
+# macd, vwap, atr, cci, adx, mfi, roc, StochasticOscillator,

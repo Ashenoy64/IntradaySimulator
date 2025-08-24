@@ -6,6 +6,7 @@ class MetricCalculator:
 
     def __init__(self):
         self.metrics:list[MultiMetricsBase|SingleMetricsBase] = []
+        self.metricHistory = []
 
     def metricCalculator(self, history:list, trend:Trend)->dict:
         calculations = {}
@@ -19,6 +20,7 @@ class MetricCalculator:
                 for key, calculation in metric.run():
                     calculations[key] = calculation
 
+        self.metricHistory.append(calculations)
         return calculations
 
 
@@ -27,3 +29,6 @@ class MetricCalculator:
 
     def addMetrics(self, metrics:list[MultiMetricsBase|SingleMetricsBase]):
         self.metrics.extend( metrics )
+
+    def getMetircHistory(self):
+        return self.metricHistory

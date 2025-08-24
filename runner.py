@@ -12,8 +12,8 @@ class Runner:
         self.positions = positions
         self.callback = None
         self.timer = timer
-        self.actionHistory = []
-        self.dataHistory = []
+        self.action_history = []
+        self.data_history = []
 
     def run( self, data_iter:TrendIter, metric_calculator:Callable[ [ list, Trend ], dict ],
             algoritm:Callable[ [ dict, float, datetime, Holdings, float, list ], Action ],

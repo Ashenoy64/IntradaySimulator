@@ -7,12 +7,50 @@ from Metrics import *
 class AlgorithmBase:
     def __init__(self)->None:
         pass
+    
+    def getAlgoMetrics(self):
+        return {}
 
     def run(self, metrics:dict, mrkt_price:float, time:datetime,
             positions:Holdings, funds:float, history:list ) -> Action:
         
         return Action(Act.HOLD, 0)
 
+from datetime import time as dt_time
+
+class AlgorithmBaseWithRisk(AlgorithmBase):
+    def __init__(self, stop_loss_pct=0.05, target_pct=0.07, square_off_time=dt_time(15, 15)):
+        super().__init__()
+        self.stop_loss_pct = stop_loss_pct
+        self.target_pct = target_pct
+        self.square_off_time = square_off_time  # datetime.time object
+        self.entry_price = None
+        self.position_open_time = None
+
+    def checkRiskControls(self, mrkt_price, current_dt, positions):
+        stock_qty = positions.getHoldingQuantity()
+
+        # If no positions, reset
+        if stock_qty == 0:
+            self.entry_price = None
+            self.position_open_time = None
+            return None  
+
+        # Square off before intraday cutoff
+        if current_dt.time() >= self.square_off_time:   # ✅ FIXED for datetime
+            return Action(Act.SELL, stock_qty)
+
+        # Check SL/Target
+        if self.entry_price:
+            pnl_pct = (mrkt_price - self.entry_price) / self.entry_price
+            # Stop-loss hit
+            if pnl_pct <= -self.stop_loss_pct:
+                return Action(Act.SELL, stock_qty)
+            # Target hit
+            if pnl_pct >= self.target_pct:
+                return Action(Act.SELL, stock_qty)
+
+        return None
 
 
 class SimpleMomentum(AlgorithmBase):
@@ -32,15 +70,12 @@ class SimpleMomentum(AlgorithmBase):
         if latest.close > previous.close and funds >= mrkt_price:
             qty = int(funds // mrkt_price)
             if qty > 0:
-                print("BUY", qty, mrkt_price)
                 return Action(Act.BUY, qty)
 
         if latest.close < previous.close and stock_qty > 0:
-            print("SELL", stock_qty, mrkt_price)
             return Action(Act.SELL, stock_qty)
 
         return  Action(Act.HOLD)
-
 
 class SimpleGoAndGoStrg(AlgorithmBase):
     def __init__(self) -> None:
@@ -79,184 +114,65 @@ class SimpleGoAndGoStrg(AlgorithmBase):
 
         return Action(Act.HOLD)
 
-class MultiMetricIntradayAlgo(AlgorithmBase):
+class EMARsiAlgo(AlgorithmBaseWithRisk):
     def __init__(self):
         super().__init__()
         self.metrics = [
             EMA("fast_ema", 9),
             EMA("slow_ema", 21),
             RSI("rsi_14", 14),
-            MACD("macd_line", "macd_signal", "macd_histogram"),
-            ADX("adx_14", 14),
-            CCI("cci_20", 20),
-            ATR("atr_14", 14),
-            BollingerBands("bollinger_upper_20", "bollinger_middle_20", "bollinger_lower_20", 20, 2),
-            MFI("mfi_14", 14),
-            VolumeAvg("volume_avg_10", 10),
-            ROC("roc_10", 10),
-            StochasticOscillator("stochastic_k_14", "stochastic_d_14", 14, 3),
-            VWMA("vwma_10", 10),
-            SMA("ema_21", 21),  # For trend confirmation
+            VWMA("vwma", 20),
         ]
-
-        # State variables to track previous crossovers and metric values
-        self.prev_macd_line = None
-        self.prev_macd_signal = None
-        self.atr_threshold = 0.5  # Tuneable parameter for ATR breakout filter
-
-    def getAlgoMetrics(self):
-        return self.metrics
-
-    def run(self, metrics: dict, mrkt_price: float, time: datetime,
-            positions: Holdings, funds: float, history: list) -> Action:
-
-        stock_qty = positions.getHoldingQuantity()
-
-        # Defensive checks for presence of necessary metrics
-        required_metrics = [
-            "adx_14", "macd_line", "macd_signal", "cci_20",
-            "atr_14", "bollinger_upper_20", "bollinger_lower_20",
-            "mfi_14", "volume_avg_10", "rsi_14", "stochastic_k_14", "roc_10", "vwma_10", "ema_21"
-        ]
-        for key in required_metrics:
-            if key not in metrics:
-                return Action(Act.HOLD)
-
-        adx = metrics["adx_14"]
-        macd_line = metrics["macd_line"]
-        macd_signal = metrics["macd_signal"]
-        cci = metrics["cci_20"]
-        atr = metrics["atr_14"]
-        boll_upper = metrics["bollinger_upper_20"]
-        boll_lower = metrics["bollinger_lower_20"]
-        mfi = metrics["mfi_14"]
-        volume_avg = metrics["volume_avg_10"]
-        rsi = metrics["rsi_14"]
-        stochastic_k = metrics["stochastic_k_14"]
-        roc = metrics["roc_10"]
-        vwma = metrics["vwma_10"]
-        ema_21 = metrics["ema_21"]
-
-        # Detect MACD crossover signals:
-        if self.prev_macd_line is None or self.prev_macd_signal is None:
-            self.prev_macd_line = macd_line
-            self.prev_macd_signal = macd_signal
-            return Action(Act.HOLD)
-
-        macd_bull_cross = (self.prev_macd_line <= self.prev_macd_signal) and (macd_line > macd_signal)
-        macd_bear_cross = (self.prev_macd_line >= self.prev_macd_signal) and (macd_line < macd_signal)
-
-        self.prev_macd_line = macd_line
-        self.prev_macd_signal = macd_signal
-
-        # Volatility breakout filters
-        breakout_long = mrkt_price >= boll_upper and atr > self.atr_threshold
-        breakout_short = mrkt_price <= boll_lower and atr > self.atr_threshold
-
-        # Volume confirmation
-        strong_volume = volume_avg > 0 and mfi > 50
-
-        # Long entry conditions
-        enter_long = (
-            adx > 25 and macd_bull_cross and mrkt_price > ema_21 and
-            rsi >= 30 and rsi <= 70 and
-            (
-                (mrkt_price <= boll_lower and mfi > 50) or
-                (breakout_long and strong_volume)
-            )
-        )
-
-        # Long exit conditions
-        exit_long = (
-            macd_bear_cross or
-            rsi > 80 or
-            (mrkt_price >= boll_upper and mfi < 50)
-        )
-
-        # Short entry conditions
-        enter_short = (
-            adx > 25 and macd_bear_cross and mrkt_price < ema_21 and
-            rsi >= 30 and rsi <= 70 and
-            (
-                (mrkt_price >= boll_upper and mfi < 50) or
-                (breakout_short and strong_volume)
-            )
-        )
-
-        # Short exit conditions
-        exit_short = (
-            macd_bull_cross or
-            rsi < 20 or
-            (mrkt_price <= boll_lower and mfi > 50)
-        )
-
-        # Position management logic
-        if stock_qty == 0:
-            if enter_long and funds >= mrkt_price:
-                qty = int(funds // mrkt_price)
-                if qty > 0:
-                    print(f"ENTER LONG: Buy {qty} @ {mrkt_price}")
-                    return Action(Act.BUY, qty)
-            elif enter_short:
-                # If short selling enabled in your system, implement here
-                # Otherwise ignore or hold
-                pass
-        else:
-            # We have a position, decide exit or hold
-            if exit_long and stock_qty > 0:
-                print(f"EXIT LONG: Sell {stock_qty} @ {mrkt_price}")
-                return Action(Act.SELL, stock_qty)
-            elif exit_short and stock_qty > 0:
-                print(f"EXIT SHORT / REDUCE: Sell {stock_qty} @ {mrkt_price}")
-                return Action(Act.SELL, stock_qty)
-
-        return Action(Act.HOLD)
-
-class EMARsiAlgo(AlgorithmBase):
-    def __init__(self):
-        super().__init__()
-        self.metrics = [EMA("fast_ema", 9), EMA("slow_ema", 21), RSI("rsi_14", 14)]
         self.prev_fast_ema = None
         self.prev_slow_ema = None
 
     def getAlgoMetrics(self):
         return self.metrics
 
-    def run(self, metrics, mrkt_price, time, positions, funds, history):
+    def run(self, metrics, mrkt_price, current_dt, positions, funds, history):
         fast_ema = metrics.get("fast_ema")
         slow_ema = metrics.get("slow_ema")
         rsi = metrics.get("rsi_14", 50)
+        vwma = metrics.get("vwma", mrkt_price)
         stock_qty = positions.getHoldingQuantity()
+
+        # Risk management check
+        risk_action = self.checkRiskControls(mrkt_price, current_dt, positions)
+        if risk_action: return risk_action
 
         if fast_ema is None or slow_ema is None:
             return Action(Act.HOLD)
-
         if self.prev_fast_ema is None or self.prev_slow_ema is None:
-            self.prev_fast_ema = fast_ema
-            self.prev_slow_ema = slow_ema
+            self.prev_fast_ema, self.prev_slow_ema = fast_ema, slow_ema
             return Action(Act.HOLD)
 
         bullish_cross = self.prev_fast_ema <= self.prev_slow_ema and fast_ema > slow_ema
         bearish_cross = self.prev_fast_ema >= self.prev_slow_ema and fast_ema < slow_ema
+        self.prev_fast_ema, self.prev_slow_ema = fast_ema, slow_ema
 
-        self.prev_fast_ema = fast_ema
-        self.prev_slow_ema = slow_ema
+        # ✅ 3 confirmations
+        bullish_confirm = bullish_cross and rsi < 70 and mrkt_price > vwma
+        bearish_confirm = (bearish_cross or rsi > 70) and mrkt_price < vwma
 
-        if bullish_cross and rsi < 70 and funds >= mrkt_price:
+        if bullish_confirm and funds >= mrkt_price:
             qty = int(funds // mrkt_price)
             if qty > 0:
+                self.entry_price = mrkt_price
+                self.position_open_time = current_dt
                 return Action(Act.BUY, qty)
 
-        if (bearish_cross or rsi > 70) and stock_qty > 0:
+        if bearish_confirm and stock_qty > 0:
             return Action(Act.SELL, stock_qty)
 
         return Action(Act.HOLD)
 
-class MACDStrategy(AlgorithmBase):
+class MACDStrategy(AlgorithmBaseWithRisk):
     def __init__(self):
         super().__init__()
         self.metrics = [
             MACD("macd_line", "macd_signal", "macd_histogram"),
+            RSI("rsi_14", 14),
+            VWAP("vwap"),
         ]
         self.prev_macd_line = None
         self.prev_macd_signal = None
@@ -264,54 +180,180 @@ class MACDStrategy(AlgorithmBase):
     def getAlgoMetrics(self):
         return self.metrics
 
-    def run(self, metrics, mrkt_price, time, positions, funds, history):
+    def run(self, metrics, mrkt_price, current_dt, positions, funds, history):
         macd_line = metrics.get("macd_line")
         macd_signal = metrics.get("macd_signal")
+        rsi = metrics.get("rsi_14", 50)
+        vwap = metrics.get("vwap", mrkt_price)
         stock_qty = positions.getHoldingQuantity()
-        
+
+        # Risk check
+        risk_action = self.checkRiskControls(mrkt_price, current_dt, positions)
+        if risk_action: return risk_action
+
         if macd_line is None or macd_signal is None:
             return Action(Act.HOLD)
-        
         if self.prev_macd_line is None or self.prev_macd_signal is None:
-            self.prev_macd_line = macd_line
-            self.prev_macd_signal = macd_signal
+            self.prev_macd_line, self.prev_macd_signal = macd_line, macd_signal
             return Action(Act.HOLD)
-        
+
         bullish_cross = self.prev_macd_line <= self.prev_macd_signal and macd_line > macd_signal
         bearish_cross = self.prev_macd_line >= self.prev_macd_signal and macd_line < macd_signal
-        
-        self.prev_macd_line = macd_line
-        self.prev_macd_signal = macd_signal
-        
-        if bullish_cross and funds >= mrkt_price:
+        self.prev_macd_line, self.prev_macd_signal = macd_line, macd_signal
+
+        # ✅ 3 confirmations
+        bullish_confirm = bullish_cross and rsi < 70 and mrkt_price > vwap
+        bearish_confirm = bearish_cross and rsi > 30 and mrkt_price < vwap
+
+        if bullish_confirm and funds >= mrkt_price:
             qty = int(funds // mrkt_price)
             if qty > 0:
+                self.entry_price = mrkt_price
+                self.position_open_time = current_dt
                 return Action(Act.BUY, qty)
-        elif bearish_cross and stock_qty > 0:
+        if bearish_confirm and stock_qty > 0:
             return Action(Act.SELL, stock_qty)
-        else:
-            return Action(Act.HOLD)
 
+        return Action(Act.HOLD)
 
-class RSIStrategy(AlgorithmBase):
+class RSIStrategy(AlgorithmBaseWithRisk):
     def __init__(self):
         super().__init__()
         self.metrics = [
             RSI("rsi_14", 14),
+            VWMA("vwma", 20),
+            ATR("atr_14", 14),
         ]
 
     def getAlgoMetrics(self):
         return self.metrics
 
-    def run(self, metrics, mrkt_price, time, positions, funds, history):
+    def run(self, metrics, mrkt_price, current_dt, positions, funds, history):
         rsi = metrics.get("rsi_14", 50)
+        vwma = metrics.get("vwma", mrkt_price)
+        atr = metrics.get("atr_14", 1.0)
         stock_qty = positions.getHoldingQuantity()
-        
-        if rsi < 30 and funds >= mrkt_price:
+
+        # Risk check
+        risk_action = self.checkRiskControls(mrkt_price, current_dt, positions)
+        if risk_action: return risk_action
+
+        # ✅ 3 confirmations
+        bullish_confirm = rsi < 30 and mrkt_price > vwma and atr > 0
+        bearish_confirm = rsi > 70 and mrkt_price < vwma
+
+        if bullish_confirm and funds >= mrkt_price:
             qty = int(funds // mrkt_price)
             if qty > 0:
+                self.entry_price = mrkt_price
+                self.position_open_time = current_dt
                 return Action(Act.BUY, qty)
-        elif rsi > 70 and stock_qty > 0:
+
+        if bearish_confirm and stock_qty > 0:
             return Action(Act.SELL, stock_qty)
-        else:
+
+        return Action(Act.HOLD)
+
+class MomentumAlgorithm(AlgorithmBaseWithRisk):
+    def __init__(self):
+        super().__init__()
+        self.metrics = [
+            ROC("roc_10", 10),
+            RSI("rsi_14", 14),
+            VWAP("vwap"),
+        ]
+
+    def getAlgoMetrics(self):
+        return self.metrics
+
+    def run(self, metrics, mrkt_price, current_dt, positions, funds, history):
+        roc = metrics.get("roc_10", 0)
+        rsi = metrics.get("rsi_14", 50)
+        vwap = metrics.get("vwap", mrkt_price)
+        stock_qty = positions.getHoldingQuantity()
+
+        # Risk check
+        risk_action = self.checkRiskControls(mrkt_price, current_dt, positions)
+        if risk_action: return risk_action
+
+        # ✅ 3 confirmations
+        bullish_confirm = roc > 0 and rsi < 70 and mrkt_price > vwap
+        bearish_confirm = (roc <= 0 or rsi >= 70) and mrkt_price < vwap
+
+        if bullish_confirm and funds >= mrkt_price:
+            qty = int(funds // mrkt_price)
+            if qty > 0:
+                self.entry_price = mrkt_price
+                self.position_open_time = current_dt
+                return Action(Act.BUY, qty)
+
+        if bearish_confirm and stock_qty > 0:
+            return Action(Act.SELL, stock_qty)
+
+        return Action(Act.HOLD)
+
+from datetime import time as dt_time
+
+class ProfitableIntradayAlgo(AlgorithmBase):
+    def __init__(self):
+        super().__init__()
+        self.metrics = [
+            VWAP("vwap"),
+            ATR("atr_14", 14),
+            RSI("rsi_14", 14),
+            ROC("roc_5", 5),  # faster momentum
+            VWMA("vwma_20", 20),
+        ]
+        self.position_open_time = None
+        self.stop_loss = None
+        self.target_price = None
+        self.risk_per_trade = 0.01  # risk 1% of funds per trade
+        self.square_off_time = dt_time(15, 10)  # square off before 3:10 PM
+
+    def getAlgoMetrics(self):
+        return self.metrics
+
+    def run(self, metrics, mrkt_price, current_dt, positions, funds, history):
+        vwap = metrics.get("vwap", mrkt_price)
+        atr = metrics.get("atr_14", 1.0)
+        rsi = metrics.get("rsi_14", 50)
+        roc = metrics.get("roc_5", 0)
+        vwma = metrics.get("vwma_20", mrkt_price)
+        stock_qty = positions.getHoldingQuantity()
+
+        # Avoid trading first 15 minutes (market open noise)
+        if current_dt.time() < dt_time(9, 45):
             return Action(Act.HOLD)
+
+        # Square off at cut-off time
+        if current_dt.time() >= self.square_off_time and stock_qty > 0:
+            return Action(Act.SELL, stock_qty)
+
+        entry_price = positions.getHoldingAvgPrice()
+        # Exit if stop-loss or target hit
+        if stock_qty > 0 and entry_price:
+            pnl_pct = (mrkt_price - entry_price) / entry_price
+            if pnl_pct <= -1.5 * atr / entry_price or pnl_pct >= 3 * atr / entry_price:
+                self.stop_loss = None
+                self.target_price = None
+                return Action(Act.SELL, stock_qty)
+
+        # Entry conditions: simple momentum breakout with confirmation
+        # Price above VWAP + ROC positive + RSI < 70 + VWMA confirms trend + low volatility condition
+        if stock_qty == 0:
+            if (mrkt_price > vwap and roc > 0 and rsi < 70 and mrkt_price > vwma and atr > 0):
+                # Calculate position size based on risk_per_trade and ATR stop-loss
+                stop_loss_price = mrkt_price - 1.5 * atr
+                if stop_loss_price <= 0:
+                    return Action(Act.HOLD)
+                risk_per_share = mrkt_price - stop_loss_price
+                max_risk_amount = funds * self.risk_per_trade
+                qty = int(max_risk_amount // risk_per_share)
+                if qty > 0 and qty * mrkt_price <= funds:
+                    self.entry_price = mrkt_price
+                    self.position_open_time = current_dt
+                    self.stop_loss = stop_loss_price
+                    self.target_price = mrkt_price + 3 * atr  # approx 2:1 RR
+                    return Action(Act.BUY, qty)
+
+        return Action(Act.HOLD)
