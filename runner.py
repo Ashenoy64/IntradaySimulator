@@ -14,6 +14,7 @@ class Runner:
         self.timer = timer
         self.action_history = []
         self.data_history = []
+        self.time_history = []
 
     def run( self, data_iter:TrendIter, metric_calculator:Callable[ [ list, Trend ], dict ],
             algoritm:Callable[ [ dict, float, datetime, Holdings, float, list ], Action ],
@@ -28,6 +29,7 @@ class Runner:
                 time.sleep(self.timer)
             self.action_history.append( action )
             self.data_history.append( trend )
+            self.time_history.append( datetime )
             if self.callback:
                 self.callback( datetime, mrkt_price, trend, metrics, action, self.funds, self.positions )
 
@@ -37,6 +39,9 @@ class Runner:
     
     def getActionHistory( self )->list:
         return self.action_history
+    
+    def getTimeHistory( self )->list:
+        return self.time_history
 
     def setCallback( self, func )->None:
         if func is not callable:

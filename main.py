@@ -7,7 +7,7 @@ from metric_calculator import MetricCalculator
 from datetime import date
 from simulation_writer import writer
 # test_writer()
-from action_ranker import action_ranker
+from action_ranker import rwrd_risk_reward_action_ranker as action_ranker
 
 def run(name, date, Algo):
     funds = 10000
@@ -77,6 +77,7 @@ def test_writer(name='RVNL.NS',date=date(month=8, day=12, year=2025), Algo=EMARs
     data_history = runner.getDataHistory()
     action_history = runner.getActionHistory()
     metric_history = mc.getMetircHistory()
+    time_history =runner.getTimeHistory()
     print({
                 "invested_start" : investment,
                 "funds_left" : funds_left,
@@ -88,7 +89,7 @@ def test_writer(name='RVNL.NS',date=date(month=8, day=12, year=2025), Algo=EMARs
                 "net_holdingvalue" : holdings.getTotal() + funds_left,
                 "net_holding_sellvalue" : funds_left + (holdings.getHoldingQuantity() * data_history[-1].close),
             })
-    writer(name+str(date),action_history,data_history,metric_history)
+    writer(name+str(date),action_history,data_history,metric_history,time_history)
     action_ranker('RVNL.NS2025-08-12',inplace=True)
 
 
