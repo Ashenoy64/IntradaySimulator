@@ -21,7 +21,6 @@ class OperationBase:
         return self.inPlace
     
 
-# ISSUE : Possibility that number of rows mismatch when subset of columns is passed
 class RemoveEmptyNullRows( OperationBase ):
     def __init__( self ) -> None:
         super().__init__( cols=[ RegexString(".*") ] )
@@ -29,7 +28,7 @@ class RemoveEmptyNullRows( OperationBase ):
     def operate(self, df: pd.DataFrame) -> pd.DataFrame:
         return df.dropna()
     
-# ISSUE : Have to figure out how to support this
+
 class RemoveColumns( OperationBase ):
     def __init__( self, cols:list[str]|None=None ) -> None:
         super().__init__( cols=cols, inPlace=True )
