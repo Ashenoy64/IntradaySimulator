@@ -26,7 +26,7 @@ class RemoveEmptyNullRows( OperationBase ):
         super().__init__( cols=[ RegexString(".*") ] )
 
     def operate(self, df: pd.DataFrame) -> pd.DataFrame:
-        return df.dropna()
+        return df.dropna().copy()
     
 
 class RemoveColumns( OperationBase ):
@@ -34,7 +34,8 @@ class RemoveColumns( OperationBase ):
         super().__init__( cols=cols, inPlace=True )
 
     def operate(self, df: pd.DataFrame) -> pd.DataFrame:
-        return df[self.operationColums]
+        other_columns = list(set(df.columns)-set(self.operationColums))
+        return df[other_columns]
     
 
 
@@ -58,12 +59,14 @@ class AddSmaFiveMetricColumn( OperationBase ):
             self.sma_calc.update(trend_obj)
             _, sma_value = self.sma_calc.run()
             sma_values.append(sma_value)
+        df = pd.DataFrame()
         df['sma'] = sma_values
 
         return df[['sma']]
             
 class AddBollingerBandTwentyColumn(OperationBase):
     def __init__(self):
+        super().__init__( cols=['high', 'low', 'open', 'close', 'volume' ]  )
         self.bbands = BollingerBands(key_upper='bb_upper', key_middle='bb_middle', key_lower='bb_lower', N=20, num_std=2)
 
     def operate(self, df: pd.DataFrame) -> pd.DataFrame:
@@ -78,7 +81,7 @@ class AddBollingerBandTwentyColumn(OperationBase):
             upper_values.append(results[0][1])
             middle_values.append(results[1][1])
             lower_values.append(results[2][1])
-
+        df = pd.DataFrame()
         df['bb_upper'] = upper_values
         df['bb_middle'] = middle_values
         df['bb_lower'] = lower_values

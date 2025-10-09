@@ -4,16 +4,41 @@ from typing import Literal, Optional
 import glob
 from Settings import FORMAT_DATA_PATH, DATA_STORE_PATH
 import os
+from RegexStr import RegexString
 
-def _format_data( df:pd.DataFrame, operations:list[OperationBase] )->pd.DataFrame:
+
+def expand_regex(columns:list[str],operation_columns:list[str] )->list[str]:
+    ops_cols = set()
+    for col in operation_columns:
+        if not isinstance(col,RegexString):
+            ops_cols.add(col)
+        else:
+            for _col in columns:
+                if col == _col:
+                    ops_cols.add(_col)
+
+    return list(ops_cols)
+
+def format_data( df:pd.DataFrame, operations:list[OperationBase], fileName:Optional[str]=None )->pd.DataFrame:
+    df_columns = set( df.columns )
     for operation in operations:
+        operation_columns = operation.getOperationColumns()
+        if any(isinstance(item, RegexString) for item in operation_columns):
+            operation_columns = expand_regex(list(df.columns),operation_columns)
+            print("Here", operation_columns)
+        if set( operation_columns ) & df_columns != set( operation_columns ):
+            if fileName:
+                print(f"Skipping.. {str(operation.__class__.__name__)} for {fileName}")
+            else:
+                print(f"Skipping.. {str(operation.__class__.__name__)}")
+            continue
+
         if operation.isInplace():
             df = operation.operate(df)
         else:
-            columns = operation.getOperationColumns()
-            operatedColumn = operation.operate( df[columns] )
+            operatedColumn = operation.operate( df[operation_columns] )
             try:
-                df[columns] = operatedColumn
+                df[ operatedColumn.columns ] = operatedColumn
 
             except ValueError as ve:
                 print("Assignment failed: ", ve)
@@ -22,7 +47,7 @@ def _format_data( df:pd.DataFrame, operations:list[OperationBase] )->pd.DataFram
                 try:
                     if not operatedColumn.index.equals(df.index):
                         # Align by reindexing, fill missing values as needed (e.g., with NaN)
-                        df[columns] = operatedColumn.reindex(df.index)
+                        df[operation_columns] = operatedColumn.reindex(df.index)
                     else:
                         raise
                 except Exception as e:
@@ -75,7 +100,7 @@ def sanity_test(
 
     return list(required_columns) if required_columns else list(all_columns)
 
-def format_data(
+def collect_an_format_data(
     data_dir: str,
     operations: list[OperationBase],
     column_merge_mode: Literal['ignore', 'merge', 'default'] = 'default',
@@ -92,11 +117,15 @@ def format_data(
 
     df_list = []
     for file_path in all_files:
-        df = pd.read_csv(file_path)[columns]
-        formatted_df = _format_data(df, operations)
+        df = pd.read_csv(file_path)
+        cols = [col for col in df.columns if col in columns]
+        df = df[cols]
+        formatted_df = format_data(df, operations,os.path.basename(file_path))
         df_list.append(formatted_df)
 
+
     combined_df = pd.concat(df_list, ignore_index=True)
+    
 
     if write_csv:
         out_path = os.path.join(FORMAT_DATA_PATH, f"{name}.csv")
@@ -105,3 +134,5 @@ def format_data(
     if return_empty:
         return None
     return combined_df
+
+
