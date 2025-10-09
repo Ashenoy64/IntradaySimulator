@@ -23,10 +23,13 @@ def format_data( df:pd.DataFrame, operations:list[OperationBase], fileName:Optio
     df_columns = set( df.columns )
     for operation in operations:
         operation_columns = operation.getOperationColumns()
+        
         if any(isinstance(item, RegexString) for item in operation_columns):
             operation_columns = expand_regex(list(df.columns),operation_columns)
-            print("Here", operation_columns)
-        if set( operation_columns ) & df_columns != set( operation_columns ):
+        
+        operation_columns = [col for col in df_columns if col in operation_columns]
+
+        if not operation_columns:
             if fileName:
                 print(f"Skipping.. {str(operation.__class__.__name__)} for {fileName}")
             else:
@@ -55,6 +58,7 @@ def format_data( df:pd.DataFrame, operations:list[OperationBase], fileName:Optio
 
             except Exception as e:
                 print("Unexpected error during assignment: ", e)
+        df_columns = set( df.columns )
                     
     return df
 
