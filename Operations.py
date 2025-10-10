@@ -5,17 +5,17 @@ from Trend import Trend
 
 class OperationBase:
     def __init__(self, cols:list[str]|None=None, inPlace:bool=False) -> None:
-        self.operationColums = cols if cols else []
+        self.operationColumns = cols if cols else []
         self.inPlace = inPlace
 
     def operate(self, df:pd.DataFrame)->pd.DataFrame:
         raise NotImplementedError()
     
-    def setOperationColums(self, cols:list[str])->None:
-        self.operationColums = cols
+    def setOperationColumns(self, cols:list[str])->None:
+        self.operationColumns = cols
 
     def getOperationColumns(self)->list[str]:
-        return self.operationColums
+        return self.operationColumns
     
     def isInplace(self)->bool:
         return self.inPlace
@@ -34,7 +34,7 @@ class RemoveColumns( OperationBase ):
         super().__init__( cols=cols, inPlace=True )
 
     def operate(self, df: pd.DataFrame) -> pd.DataFrame:
-        other_columns = list(set(df.columns)-set(self.operationColums))
+        other_columns = list(set(df.columns)-set(self.operationColumns))
         return df[other_columns]
     
 

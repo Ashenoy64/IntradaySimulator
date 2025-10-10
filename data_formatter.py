@@ -104,7 +104,7 @@ def sanity_test(
 
     return list(required_columns) if required_columns else list(all_columns)
 
-def collect_an_format_data(
+def collect_and_format_data(
     data_dir: str,
     operations: list[OperationBase],
     column_merge_mode: Literal['ignore', 'merge', 'default'] = 'default',
