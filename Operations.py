@@ -2,9 +2,10 @@ import pandas as pd
 from RegexStr import RegexString
 from Metrics import SMA, BollingerBands
 from Trend import Trend
+from typing import Optional, List
 
 class OperationBase:
-    def __init__(self, cols:list[str]|None=None, inPlace:bool=False) -> None:
+    def __init__(self, cols: Optional[List[str]] = None, inPlace: bool = False) -> None:
         self.operationColumns = cols if cols else []
         self.inPlace = inPlace
 
@@ -30,7 +31,7 @@ class RemoveEmptyNullRows( OperationBase ):
     
 
 class RemoveColumns( OperationBase ):
-    def __init__( self, cols:list[str]|None=None ) -> None:
+    def __init__( self, cols: Optional[List[str]] = None ) -> None:
         super().__init__( cols=cols, inPlace=True )
 
     def operate(self, df: pd.DataFrame) -> pd.DataFrame:
@@ -40,7 +41,7 @@ class RemoveColumns( OperationBase ):
 
 
 class PercentChange( OperationBase ):
-    def __init__(self, cols: list[str] | None = None) -> None:
+    def __init__(self, cols: Optional[List[str]] = None) -> None:
         super().__init__(cols)
 
     def operate(self, df: pd.DataFrame) -> pd.DataFrame:

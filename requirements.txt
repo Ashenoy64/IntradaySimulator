@@ -1,2 +1,4 @@
 yfinance
 dash
+pandas
+numpy
