@@ -1,9 +1,8 @@
 import pandas as pd
 import os
 import numpy as np
-from typing import Optional
 
-def simple_action_ranker(name: str, inplace: bool = False, updated_name: Optional[str] = None, lookahead: int = 5):
+def simple_action_ranker(name: str, inplace: bool = False, updated_name: str | None = None, lookahead: int = 5):
     path = os.path.join('simulation_results/', name + '.csv')
     if not os.path.exists(path):
         raise Exception("File does not exist")
@@ -71,7 +70,7 @@ def simple_action_ranker(name: str, inplace: bool = False, updated_name: Optiona
         updated_path = os.path.join('simulation_results/', updated_name if updated_name else name + '_updated' + '.csv')
         df.to_csv(updated_path, index=False)
 
-def atr_action_ranker(name: str, inplace: bool = False, updated_name: Optional[str] = None, hold_period: int = 5):
+def atr_action_ranker(name: str, inplace: bool = False, updated_name: str | None = None, hold_period: int = 5):
     path = os.path.join('simulation_results', name + '.csv')
     if not os.path.exists(path):
         raise Exception("File does not exist")
@@ -147,7 +146,7 @@ import pandas as pd
 import os
 import numpy as np
 
-def rwrd_realized_return_action_ranker(name: str, inplace: bool = False, updated_name: Optional[str] = None, hold_period: int = 5):
+def rwrd_realized_return_action_ranker(name: str, inplace: bool = False, updated_name: str | None = None, hold_period: int = 5):
     path = os.path.join('simulation_results', name + '.csv')
     if not os.path.exists(path):
         raise Exception("File does not exist")
@@ -202,7 +201,7 @@ def rwrd_realized_return_action_ranker(name: str, inplace: bool = False, updated
         df.to_csv(updated_path, index=False)
 
 
-def rwrd_risk_reward_action_ranker(name: str, inplace: bool = False, updated_name: Optional[str] = None, hold_period: int = 5, atr_period: int = 14, risk_reward_threshold: float = 1.5):
+def rwrd_risk_reward_action_ranker(name: str, inplace: bool = False, updated_name: str | None = None, hold_period: int = 5, atr_period: int = 14, risk_reward_threshold: float = 1.5):
     path = os.path.join('simulation_results', name + '.csv')
     if not os.path.exists(path):
         raise Exception("File does not exist")

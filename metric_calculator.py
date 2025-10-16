@@ -1,15 +1,14 @@
 from Trend import Trend
 from Metrics import MultiMetricsBase, SingleMetricsBase
-from typing import Union
 
 
 class MetricCalculator:
 
     def __init__(self):
-        self.metrics: list[Union[MultiMetricsBase, SingleMetricsBase]] = []
+        self.metrics:list[MultiMetricsBase|SingleMetricsBase] = []
         self.metricHistory = []
 
-    def metricCalculator(self, history:list, trend:Trend) -> dict:
+    def metricCalculator(self, history:list, trend:Trend)->dict:
         calculations = {}
         
         for metric in self.metrics:
@@ -25,10 +24,10 @@ class MetricCalculator:
         return calculations
 
 
-    def addMetric(self, metric: Union[MultiMetricsBase, SingleMetricsBase]):
+    def addMetric(self, metric:MultiMetricsBase|SingleMetricsBase):
         self.metrics.append(metric)
 
-    def addMetrics(self, metrics: list[Union[MultiMetricsBase, SingleMetricsBase]]):
+    def addMetrics(self, metrics:list[MultiMetricsBase|SingleMetricsBase]):
         self.metrics.extend( metrics )
 
     def getMetircHistory(self):

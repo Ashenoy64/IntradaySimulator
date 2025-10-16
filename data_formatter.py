@@ -112,7 +112,7 @@ def collect_and_format_data(
     write_csv: bool = False,
     return_empty: bool = False,
     name: str = 'strange'
-) -> Optional[pd.DataFrame]:
+) -> pd.DataFrame | None:
     if columns is None:
         columns = []
     directory_path = os.path.join(DATA_STORE_PATH, data_dir)

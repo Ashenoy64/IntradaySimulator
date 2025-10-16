@@ -1,5 +1,5 @@
 from runner import Runner
-from algoritm import *
+from algoritm import  *
 from action_resolver import action_resolver
 from Holdings import Holdings
 from trend_iter import TrendIter
@@ -62,7 +62,7 @@ def collective_sim():
         json.dump(result,f)
 
 
-def test_writer(name='AAPL', date=date(2025, 10, 1), Algo=EMARsiAlgo):
+def test_writer(name='RVNL.NS',date=date(month=8, day=12, year=2025), Algo=EMARsiAlgo):
     funds = 1000
     data_iter = TrendIter( name, date=date )
     holdings = Holdings(0,0.0)
@@ -90,43 +90,9 @@ def test_writer(name='AAPL', date=date(2025, 10, 1), Algo=EMARsiAlgo):
                 "net_holding_sellvalue" : funds_left + (holdings.getHoldingQuantity() * data_history[-1].close),
             })
     writer(name+str(date),action_history,data_history,metric_history,time_history)
-    action_ranker(f'{name}{date}', inplace=True)
+    action_ranker('RVNL.NS2025-08-12',inplace=True)
 
 
-def test_comprehensive_metrics(name='AAPL', date=date(2025, 10, 1)):
-    """
-    Run simulation with ComprehensiveMetricsAlgo to collect ALL available metrics.
-    This generates maximum data for analysis without making any trading decisions.
-    """
-    funds = 10000  # Starting funds (won't be used for trading)
-    data_iter = TrendIter(name, date=date)
-    holdings = Holdings(0, 0.0)
-    runner = Runner(funds, holdings)
-    algo = ComprehensiveMetricsAlgo()
-    mc = MetricCalculator()
-    mc.addMetrics(algo.getAlgoMetrics())
 
-    runner.run(data_iter, mc.metricCalculator, algo.run, action_resolver)
-    investment = funds + holdings.getTotal()
-    funds_left = runner.getFunds()
-    data_history = runner.getDataHistory()
-    action_history = runner.getActionHistory()
-    metric_history = mc.getMetircHistory()
-    time_history = runner.getTimeHistory()
-
-    print(f"Comprehensive Metrics Collection for {name}")
-    print(f"Starting Investment: ${investment}")
-    print(f"Funds Left: ${funds_left}")
-    print(f"Data Points Collected: {len(data_history)}")
-    print(f"Metrics per Data Point: {len(metric_history[0]) if metric_history else 0}")
-    print(f"Total Metrics Collected: {len(data_history) * len(metric_history[0]) if metric_history else 0}")
-
-    # Save the comprehensive data
-    writer(f"{name}_comprehensive{str(date)}", action_history, data_history, metric_history, time_history)
-    return data_history, metric_history
-
-
-# Uncomment to run comprehensive metrics collection instead of default trading simulation
-# test_comprehensive_metrics()
 
 test_writer()
