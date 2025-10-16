@@ -3,9 +3,10 @@ from Trend import Trend
 import csv
 import os
 from datetime import datetime
+from typing import Optional, List
 
 
-def writer(name:str,action_history:list[Action], data_history:list[Trend], metric_history:list[dict], time_history: list[datetime]|None = None):
+def writer(name:str, action_history:List[Action], data_history:List[Trend], metric_history:List[dict], time_history: Optional[List[datetime]] = None):
     if not os.path.exists('simulation_results/'):
         os.mkdir('simulation_results')
 
