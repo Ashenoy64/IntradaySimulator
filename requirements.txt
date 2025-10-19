@@ -2,3 +2,5 @@ yfinance
 dash
 pandas
 numpy
+scikit-learn
+joblib
