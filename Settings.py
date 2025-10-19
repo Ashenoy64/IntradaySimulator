@@ -9,7 +9,8 @@ SCALER_PATH='models/scaler'
 dirs = [
     SIMULATION_RESULTS_PATH,
     MODELS_STORE_PATH,
-    FORMAT_DATA_PATH
+    FORMAT_DATA_PATH,
+    SCALER_PATH
 ]
 
 for dir in dirs:
