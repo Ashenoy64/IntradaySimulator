@@ -30,6 +30,14 @@ class RemoveEmptyNullRows( OperationBase ):
         return df.dropna().copy()
     
 
+class FillNANRows( OperationBase ):
+    def __init__( self ) -> None:
+        super().__init__( cols=[ RegexString(".*") ] )
+
+    def operate(self, df: pd.DataFrame) -> pd.DataFrame:
+        return df.fillna(method='ffill').fillna(method='bfill')
+    
+
 class RemoveColumns( OperationBase ):
     def __init__( self, cols: Optional[List[str]] = None ) -> None:
         super().__init__( cols=cols, inPlace=True )
