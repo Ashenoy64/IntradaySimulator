@@ -35,7 +35,7 @@ class FillNANRows( OperationBase ):
         super().__init__( cols=[ RegexString(".*") ] )
 
     def operate(self, df: pd.DataFrame) -> pd.DataFrame:
-        return df.fillna(method='ffill').fillna(method='bfill')
+        return df.ffill().bfill()
     
 
 class RemoveColumns( OperationBase ):

@@ -60,11 +60,11 @@ class TrainerBase:
         self.random_seed: int = 42
 
         self.scaler:Optional[ScalerBase] = None
-        self.evaluator= None
-        self.X_train =None
-        self.X_test =None
-        self.y_train =None
-        self.y_test =None
+        self.evaluator = None
+        self.X_train = None
+        self.X_test = None
+        self.y_train = None
+        self.y_test = None
 
     def train(self) -> None:
         raise NotImplementedError()
@@ -73,13 +73,13 @@ class TrainerBase:
         raise NotImplementedError()
 
     def setSeed(self, seed: int) -> None:
-        self.randomSeed = seed
+        self.random_seed = seed
 
     def setShuffle(self, shuffle: bool) -> None:
-        self.doShuffle = shuffle
+        self.do_shuffle = shuffle
 
     def setSplitRate(self, rate: float) -> None:
-        self.splitRate = rate
+        self.split_rate = rate
 
     def setDataSplitter(self, splitter: DataSplitFunc) -> None:
         self.splitter = splitter
@@ -188,7 +188,6 @@ class SVRPredictor(TrainerBase):
             epsilon=0.1
         )
         self.model.fit(self.X_train, self.y_train)
-        self.X_test, self.y_test = self.X_test, self.y_test
 
     def test(self) -> Dict[str, float]:
         preds = self.model.predict(self.X_test)

@@ -7,9 +7,9 @@ import numpy as np
 
 
 def SimpleDeciderEval(model, X_test: pd.DataFrame, y_test: pd.Series) -> Dict[str, float]:
-        preds = model.predict(X_test)
-        acc = accuracy_score(y_test, preds)
-        return {"accuracy": float(acc)}
+    preds = model.predict(X_test)
+    acc = accuracy_score(y_test, preds)
+    return {"accuracy": float(acc)}
 
 
 def SimplePredictorEval(model, X_test: pd.DataFrame, y_test: pd.Series) -> Dict[str, float]:
