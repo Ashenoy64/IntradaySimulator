@@ -54,7 +54,7 @@ This simulator aims to democratize trading strategy development. Whether you’r
 - [ ] **Training process so easy even your pet can overfit**  
   Select ML model, pick dataset, hit train, sip coffee, achieve trading nirvana.
 
-- [ ] **Data cleaning, but make it sparkle**  
+- [x] **Data cleaning, but make it sparkle**  
   Automated cleaning and preprocessing that makes your data cleaner than your kitchen after Diwali.
 
 - [ ] **Simulation time-travel**  
@@ -65,6 +65,9 @@ This simulator aims to democratize trading strategy development. Whether you’r
 
 - [ ] **Bug fixes, the eternal battle**  
   Squash bugs, banish glitches, and never admit you missed an edge case.
+
+- [ ] **Tests**
+      Conduct systematic tests to see if we can create an algorithm which can make profit out of given market day. Does any algorithm even give profit at all?
 
 ***
 
@@ -101,3 +104,4 @@ Contribute code, contribute ideas, or just drop by to watch the show!
 MIT. Use, extend, remix, and have fun—just don’t sue if your “Moonshot” strategy ends up in the Mariana Trench.
 
 ***
+
