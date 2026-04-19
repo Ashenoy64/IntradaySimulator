@@ -7,21 +7,22 @@ from metric_calculator import MetricCalculator
 from datetime import date
 from simulation_writer import writer
 # test_writer()
-from action_ranker import rwrd_risk_reward_action_ranker as action_ranker
+from action_ranker import RwrdRealizedReturnActionRanker as action_ranker
 
 def run(name, date, Algo):
     funds = 10000
     data_iter = TrendIter( name, date=date )
     holdings = Holdings(0,0.0)
-    runner = Runner(funds,holdings)
     algo = Algo()
     mc = MetricCalculator()
+    runner = Runner(funds,holdings,algo,mc)
     mc.addMetrics(algo.getAlgoMetrics())
     investment = funds + holdings.getTotal()
-    runner.run(data_iter,mc.metricCalculator,algo.run, action_resolver)
+    runner.run(data_iter, action_resolver)
     funds_left = runner.getFunds()
     holdings = runner.getPositions()
     history = runner.getDataHistory()
+    writer(name+"_testing",runner)
     return investment,funds_left, holdings, history[-1].close
 
 
@@ -36,7 +37,7 @@ def collective_sim():
 
     result = {}
 
-    d = date(month=8, day=12, year=2025)
+    d = date(month=4, day=14, year=2026)
 
     for cmp in cmps:
         _cmps = {}
@@ -93,7 +94,7 @@ def test_writer(name='AAPL', date=date(2025, 10, 1), Algo=EMARsiAlgo):
     action_ranker(f'{name}{date}', inplace=True)
 
 
-def test_comprehensive_metrics(name='AAPL', date=date(2025, 10, 1)):
+def test_comprehensive_metrics(name='AAPL', date=date(2026, 4, 12)):
     """
     Run simulation with ComprehensiveMetricsAlgo to collect ALL available metrics.
     This generates maximum data for analysis without making any trading decisions.
@@ -126,7 +127,5 @@ def test_comprehensive_metrics(name='AAPL', date=date(2025, 10, 1)):
     return data_history, metric_history
 
 
-# Uncomment to run comprehensive metrics collection instead of default trading simulation
-# test_comprehensive_metrics()
-
-test_writer()
+if __name__ == "__main__":
+    action_ranker("ANET_testing", updated_name="New").rankAction()

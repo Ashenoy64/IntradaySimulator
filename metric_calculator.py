@@ -9,7 +9,7 @@ class MetricCalculator:
         self.metrics: list[Union[MultiMetricsBase, SingleMetricsBase]] = []
         self.metricHistory = []
 
-    def metricCalculator(self, history:list, trend:Trend) -> dict:
+    def calculateMetric(self, history:list, trend:Trend) -> dict:
         calculations = {}
         
         for metric in self.metrics:

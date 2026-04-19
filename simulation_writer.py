@@ -4,9 +4,9 @@ import csv
 import os
 from datetime import datetime
 from typing import Optional, List
+from runner import Runner
 
-
-def writer(name:str, action_history:List[Action], data_history:List[Trend], metric_history:List[dict], time_history: Optional[List[datetime]] = None):
+def writer(name:str, runner:Runner, disable_time: bool = False, disable_metric: bool = False):
     if not os.path.exists('simulation_results/'):
         os.mkdir('simulation_results')
 
@@ -20,13 +20,18 @@ def writer(name:str, action_history:List[Action], data_history:List[Trend], metr
         'price',
     ]
 
-    if time_history:
+    time_history = runner.getTimeHistory()
+    if time_history and not disable_time:
         field_names.append( 'time' )
-
-    if metric_history:
+    
+    metric_history = runner.getMetircHistory()
+    if metric_history and not disable_metric:
         metric_names = list( metric_history[0].keys() )
     else:
         metric_names = []
+
+    action_history = runner.getActionHistory()
+    data_history = runner.getDataHistory()
 
     fp = open( 'simulation_results/' + name + ".csv",'w', newline='' )
     wr = csv.DictWriter( fp, fieldnames=field_names+metric_names )
