@@ -5,11 +5,12 @@ class Holdings:
 
     def addPosition( self, quantity:int, price:float )->None:
         amt = quantity * price
-        self.average_price = ( ( self.average_price * quantity ) + amt ) /  ( quantity + self.quantity )
+        self.average_price = ( ( self.average_price * quantity ) + amt ) /\
+          ( quantity + self.quantity )
         self.quantity += quantity 
 
     def removePosition( self, quantity:int )->None:
-        if quantity>self.quantity:
+        if quantity > self.quantity:
             raise Exception("Quantity to sell is more than holdings")
         
         self.quantity -= quantity

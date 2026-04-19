@@ -1,7 +1,7 @@
 from datetime import date, timedelta
 
 
-def get_last_working_day()->date:
+def getLastWorkingDay()->date:
     """
     Calculates the last working day (Monday-Friday) from a today.
     """
@@ -15,5 +15,5 @@ def get_last_working_day()->date:
     else:  # For Tuesday-Saturday, the last working day was the previous day
         days_to_subtract = 1
 
-    last_working_day = date.today() - timedelta(days=days_to_subtract)
+    last_working_day = date.today() - timedelta( days = days_to_subtract )
     return last_working_day

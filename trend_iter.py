@@ -6,7 +6,9 @@ from Trend import Trend
 
 
 class TrendIter:
-    def __init__(self, tick, date:Optional[date]=None, interval:Optional[Interval]=None  ) -> None:
+    def __init__(self, tick,
+                date:Optional[ date ] = None,
+                interval:Optional[ Interval ] = None ) -> None:
         args = [ tick ]
         if date:
             args.append( date )
@@ -17,7 +19,7 @@ class TrendIter:
         self.indices = self.data.index.tolist()
         self.index_pos = 0
 
-    def __iter__(self):
+    def __iter__( self ):
         return self
 
     def getTrendTuple( self, row )->Trend:
@@ -30,10 +32,10 @@ class TrendIter:
         )
         return trend
 
-    def __next__(self):
-        if self.index_pos >= len(self.data):
+    def __next__( self ):
+        if self.index_pos >= len( self.data ):
             raise StopIteration
-        i = self.indices[self.index_pos]
+        i = self.indices[ self.index_pos ]
         row = self.data.loc[i]
         result = self.getTrendTuple( row )
         self.index_pos += 1

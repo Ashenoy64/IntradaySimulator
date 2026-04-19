@@ -5,10 +5,11 @@ import os
 from datetime import datetime
 from typing import Optional, List
 from runner import Runner
+from Settings import SIMULATION_RESULTS_PATH
 
-def writer(name:str, runner:Runner, disable_time: bool = False, disable_metric: bool = False):
-    if not os.path.exists('simulation_results/'):
-        os.mkdir('simulation_results')
+def writer( name:str, runner:Runner, disable_time:bool = False, disable_metric: bool = False ):
+    if not os.path.exists( SIMULATION_RESULTS_PATH ):
+        os.mkdir( SIMULATION_RESULTS_PATH )
 
     field_names = [
         'action',
@@ -26,27 +27,27 @@ def writer(name:str, runner:Runner, disable_time: bool = False, disable_metric: 
     
     metric_history = runner.getMetircHistory()
     if metric_history and not disable_metric:
-        metric_names = list( metric_history[0].keys() )
+        metric_names = list( metric_history[ 0 ].keys() )
     else:
         metric_names = []
 
     action_history = runner.getActionHistory()
     data_history = runner.getDataHistory()
 
-    fp = open( 'simulation_results/' + name + ".csv",'w', newline='' )
-    wr = csv.DictWriter( fp, fieldnames=field_names+metric_names )
+    path = os.path.join( SIMULATION_RESULTS_PATH, name + ".csv" )
+    fp = open( path, 'w' , newline='' )
+    wr = csv.DictWriter( fp, fieldnames = field_names + metric_names )
     wr.writeheader()
-    for index in range(0,len(action_history)):
-        trend = data_history[index]
+    for index in range( 0, len( action_history ) ):
+        trend = data_history[ index ]
         wr.writerow({
-            'action':action_history[index].getActonStr(),
+            'action':action_history[ index ].getActonStr(),
             'close': trend.close,
             'open':trend.open,
             'high': trend.high,
             'low':trend.low,
             'volume':trend.volume,
             'price': trend.close,
-            **metric_history[index]
-        } | ({'time': time_history[index]} if time_history is not None else {}))
-    
+            **metric_history[ index ]
+        } | ( { 'time': time_history[ index ] } if time_history is not None else {} ) )
     fp.close()
