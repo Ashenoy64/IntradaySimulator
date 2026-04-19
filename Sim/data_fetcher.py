@@ -1,5 +1,5 @@
-from Interval import Interval
-from utility import getLastWorkingDay
+from .Interval import Interval
+from Utility import getLastWorkingDay
 from datetime import date
 from pandas import DataFrame
 import yfinance
@@ -16,8 +16,3 @@ def fetch_data( tick:str,
     data.columns = data.columns.get_level_values( 0 )
     data[ 'time' ] = data.index
     return data
-
-
-if __name__ == "__main__":
-    df = fetch_data( "ANET" )
-    print( df.head() )

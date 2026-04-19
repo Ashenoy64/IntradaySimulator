@@ -1,8 +1,8 @@
-from data_fetcher import fetch_data
+from .data_fetcher import fetch_data
 from datetime import date
 from typing import Optional
-from Interval import Interval
-from Trend import Trend
+from .Interval import Interval
+from .Trend import Trend
 
 
 class TrendIter:

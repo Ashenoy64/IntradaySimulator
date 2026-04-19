@@ -1,12 +1,12 @@
-from Holdings import Holdings
 from collections.abc import Callable
 import time
-from metric_calculator import MetricCalculator
-from algoritm import AlgorithmBase
-from trend_iter import TrendIter, Trend
-from Action import Action
+from .metric_calculator import MetricCalculator
+from .trend_iter import TrendIter
+from Algorithm import AlgorithmBase
+from .Holdings import Holdings
+from .Trend import Trend
+from .Action import Action
 from datetime import datetime
-
 
 class Runner:
     def __init__( self, 

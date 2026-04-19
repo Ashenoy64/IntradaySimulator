@@ -1,38 +1,7 @@
 from collections import deque
 from math import sqrt
-from Trend import Trend
-
-class SingleMetricsBase:
-    def __init__(self, key:str ):
-        self.key = key
-    
-    def update( self, trend:Trend ):
-        """Update internal state with new bar."""
-        raise NotImplementedError()
-    
-    def run( self ) -> tuple[str,float]:
-        """Return current metric value."""
-        raise NotImplementedError()
-    
-    def reset( self ):
-        """Reset internal state before new simulation day."""
-        pass
-
-class MultiMetricsBase:
-    def __init__( self, keys:list[str] ):
-        self.keys = keys
-    
-    def update( self, trend:Trend ):
-        """Update internal state with new bar."""
-        raise NotImplementedError()
-    
-    def run( self ) -> list[tuple[str,float]]:
-        """Return current metric value."""
-        raise NotImplementedError()
-    
-    def reset( self ):
-        """Reset internal state before new simulation day."""
-        pass
+from Sim import Trend
+from . import SingleMetricsBase, MultiMetricsBase
 
 class SMA( SingleMetricsBase ):
     def __init__( self, key:str, N:int ):
@@ -531,6 +500,3 @@ class VolumeAvg( SingleMetricsBase ):
         if len( self.window ) < self.N:
             return ( self.key, 0.0 )
         return ( self.key, self.sum_vol / self.N )
-
-# sma, ema, TypicalPrice, VWMA, VolumeAvg,bollingerbands, rsi, 
-# macd, vwap, atr, cci, adx, mfi, roc, StochasticOscillator,

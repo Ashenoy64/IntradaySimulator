@@ -1,4 +1,4 @@
-from Trend import Trend
+from .Trend import Trend
 from Metrics import MultiMetricsBase, SingleMetricsBase
 from typing import Union
 

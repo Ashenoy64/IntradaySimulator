@@ -1,5 +1,5 @@
-from Action import Action, Act
-from Holdings import Holdings
+from .Action import Action, Act
+from .Holdings import Holdings
 
 
 def action_resolver(action:Action,mrkt_price:float, positions:Holdings, funds:float)->float:

@@ -1,10 +1,9 @@
-from Action import Action
-from Trend import Trend
+from Sim import Action, Trend
+from Sim.runner import Runner
 import csv
 import os
 from datetime import datetime
 from typing import Optional, List
-from runner import Runner
 from Settings import SIMULATION_RESULTS_PATH
 
 def writer( name:str, runner:Runner, disable_time:bool = False, disable_metric: bool = False ):
