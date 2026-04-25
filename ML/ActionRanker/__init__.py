@@ -25,6 +25,8 @@ class ActionRankerBase:
         self.read_base_dir = base_dir
     
     def setWriteBaseDir( self, base_dir:str )->None:
+        if not os.path.exists( os.path.join( base_dir ) ):
+            os.mkdir( os.path.join( base_dir ) )  
         self.write_base_dir = base_dir
 
     def readFile( self )->pd.DataFrame:

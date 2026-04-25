@@ -3,24 +3,8 @@ from .RegexStr import RegexString
 from Metrics.Metrics import SMA, BollingerBands
 from Sim.Trend import Trend
 from typing import Optional, List
+from . import OperationBase
 
-class OperationBase:
-    def __init__( self, cols:Optional[List[str]] = None, inPlace:bool = False ) -> None:
-        self.operationColumns = cols if cols else []
-        self.inPlace = inPlace
-
-    def operate( self, df:pd.DataFrame )->pd.DataFrame:
-        raise NotImplementedError()
-    
-    def setOperationColumns( self, cols:list[ str ] )->None:
-        self.operationColumns = cols
-
-    def getOperationColumns( self )->list[ str ]:
-        return self.operationColumns
-    
-    def isInplace( self )->bool:
-        return self.inPlace
-    
 class RemoveEmptyNullRows( OperationBase ):
     def __init__( self ) -> None:
         super().__init__( cols=[ RegexString( ".*" ) ] )

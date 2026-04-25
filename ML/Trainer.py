@@ -1,160 +1,11 @@
-import os
-import joblib
 import pandas as pd
-from enum import Enum
-from typing import (
-    Any,
-    Callable,
-    Dict,
-    Optional,
-    Tuple,
-    TypeVar,
-)
-from sklearn.base import BaseEstimator
-from sklearn.model_selection import train_test_split
-from Settings import MODELS_STORE_PATH
+from typing import Dict
 import numpy as np
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.svm import SVR
 from sklearn.metrics import accuracy_score, mean_squared_error
-from Scaler import ScalerBase
-
-DataSplitFunc = Callable[
-    [
-        pd.DataFrame,         # X
-        pd.Series | pd.DataFrame,  # y
-        float | None,         # test_size
-        float | None,         # train_size
-        int | None,           # random_state
-        bool,                 # shuffle
-        Optional[pd.Series],  # stratify
-    ],
-    Tuple[pd.DataFrame, pd.DataFrame, pd.Series | pd.DataFrame, pd.Series | pd.DataFrame],
-]
-
-EvaluatorFunc = Callable[
-    [BaseEstimator, pd.DataFrame, pd.Series | pd.DataFrame], Dict[str, float]
-]
-
-class MODEL_TYPE( Enum ):
-    DECIDER = "decider"
-    PREDICTOR = "predictor"
-
-class TrainerBase:
-    def __init__(
-        self,
-        X: pd.DataFrame,
-        Y: pd.Series | pd.DataFrame,
-        model_type: MODEL_TYPE = MODEL_TYPE.DECIDER,
-    ) -> None:
-        self.splitter = train_test_split
-        self.x: pd.DataFrame = X
-        self.y: pd.Series | pd.DataFrame = Y
-        self.model_type: MODEL_TYPE = model_type
-
-        self.model = None
-        self.do_shuffle: bool = False
-        self.split_rate: float = 0.25
-        self.random_seed: int = 42
-
-        self.scaler:Optional[ ScalerBase ] = None
-        self.evaluator = None
-        self.X_train = None
-        self.X_test = None
-        self.y_train = None
-        self.y_test = None
-
-        self.base_dir = MODELS_STORE_PATH
-
-    def train( self ) -> None:
-        raise NotImplementedError()
-
-    def test( self ) -> None:
-        raise NotImplementedError()
-
-    def setSeed( self, seed:int ) -> None:
-        self.random_seed = seed
-
-    def setShuffle( self, shuffle: bool ) -> None:
-        self.do_shuffle = shuffle
-
-    def setSplitRate( self, rate:float ) -> None:
-        self.split_rate = rate
-
-    def setDataSplitter( self, splitter:DataSplitFunc ) -> None:
-        self.splitter = splitter
-
-    def __loadLoadedObject( self, obj: Dict[str, Any] ) -> None:
-        self.model = obj.get( "model", None )
-        self.X_train = obj.get( "X_train", None )
-        self.X_test = obj.get("X_test", None )
-        self.y_train = obj.get( "y_train", None )
-        self.y_test = obj.get( "y_test", None )
-        self.evaluator = obj.get( "evaluator", None )
-        scaler = obj.get( "scaler", None )
-        if scaler:
-            self.scaler = scaler
-        
-        self.loadLoadedObject( obj )
-
-    def loadLoadedObject( self, obj: Dict[str, Any] ) -> None:
-        pass
-
-    def setModelPath( self, base_dir:str )->None:
-        self.base_dir = base_dir
-
-    def load( self, name:str ) -> None:
-        base_dir =  os.path.join( self.base_dir, name, self.model_type.value )
-        if not os.path.exists( file_path ):
-            raise FileNotFoundError( f"Saved model not found at { file_path }" )
-
-        file_path = os.path.join( base_dir, f"{ name }.joblib" )
-        saved = joblib.load( file_path )
-        if self.scaler:
-            self.scaler.setScalerBaseDir( base_dir )
-            self.scaler.load( name )
-        self.__loadLoadedObject( saved )
-
-    def __setSaveObject( self ) -> Dict[str, Any]:
-        save_obj = {
-            "model": self.model,
-            "X_train": self.X_train,
-            "X_test": self.X_test,
-            "y_train": self.y_train,
-            "y_test": self.y_test,
-            "evaluator": self.evaluator,
-        }
-
-        if self.scaler:
-            save_obj[ "scaler" ] = self.scaler
-        
-        user_set = self.setSaveObject()
-        save_obj.update( user_set )
-        return save_obj
-    
-    def setSaveObject(self) -> Dict[str, Any]:
-        return {}
-
-    def save( self, name:str ) -> None:
-        base_dir =  os.path.join( self.base_dir, name, self.model_type.value )
-        os.makedirs( base_dir, exist_ok = True )
-        save_obj = self.setSaveObject()
-        file_path =  os.path.join(  base_dir, f"{ name }.joblib")
-        joblib.dump( save_obj, file_path, compress = 3 )
-        if self.scaler:
-            self.scaler.setScalerBaseDir( base_dir )
-            self.scaler.save( name )
-
-    def evaluate( self ) -> Dict[str, float]:
-        if self.evaluator is None:
-            raise ValueError( "Evaluator function is not set." )
-        return self.evaluator( self.model, self.X_test, self.y_test )
-
-    def setEvaluator( self, evaluator:EvaluatorFunc ) -> None:
-        self.evaluator = evaluator
-
-    def setScaler( self, scaler:ScalerBase )->None:
-        self.scaler = scaler
+from . import ScalerBase
+from . import TrainerBase, MODEL_TYPE
 
 class RandomForestDecider( TrainerBase ):
     def __init__( self, X:pd.DataFrame, Y:pd.Series ) -> None:
@@ -188,6 +39,7 @@ class RandomForestDecider( TrainerBase ):
         return { "accuracy": float( acc ) }
 
 
+
 class SVRPredictor( TrainerBase ):
     def __init__( self, X:pd.DataFrame, Y:pd.Series ) -> None:
         super().__init__( X, Y, MODEL_TYPE.PREDICTOR )
@@ -201,8 +53,7 @@ class SVRPredictor( TrainerBase ):
             shuffle = self.do_shuffle
         )
         if self.scaler is not None:
-            self.scaler.fit( self.X_train )
-            self.X_train = self.scaler.transform( self.X_train )
+            self.X_train = self.scaler.fit_transform( self.X_train )
             self.X_test = self.scaler.transform( self.X_test )
 
         self.model = SVR(
@@ -218,3 +69,4 @@ class SVRPredictor( TrainerBase ):
         mse = mean_squared_error( self.y_test, preds )
         rmse = np.sqrt( mse )
         return { "mse": mse, "rmse": rmse }
+    

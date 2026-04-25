@@ -127,6 +127,8 @@ def collect_and_format_data(
         df_list.append( formatted_df )
 
     combined_df = pd.concat( df_list, ignore_index = True )
+    # Remove the rows with na
+    combined_df = combined_df.dropna()
 
     if write_csv:
         out_path = os.path.join( FORMAT_DATA_PATH, f"{ name }.csv" )

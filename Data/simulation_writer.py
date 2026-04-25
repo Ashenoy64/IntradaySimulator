@@ -7,8 +7,8 @@ from typing import Optional, List
 from Settings import SIMULATION_RESULTS_PATH
 
 def writer( name:str, runner:Runner, disable_time:bool = False, disable_metric: bool = False, subpath:str = "" ):
-    if not os.path.exists( SIMULATION_RESULTS_PATH ):
-        os.mkdir( SIMULATION_RESULTS_PATH )
+    if not os.path.exists( os.path.join( SIMULATION_RESULTS_PATH, subpath ) ):
+        os.mkdir( os.path.join( SIMULATION_RESULTS_PATH, subpath ) )
 
     field_names = [
         'action',

@@ -46,12 +46,11 @@ Action ranker ranks each action taken withing a range from 0 to 1, Rank labler l
 
 # TODO
     - [ ] Clean Up
-    - [ ] Use Settings.json instead of hardcoded paths
     - [ ] Fix inconsistent formatting across the code
         - [ ]  Variable naming
-        - [ ]  Spaces
-        - [ ]  Set up linter
-    - [ ] Set up tests
-    - [ ] Have to clean up the dir structure, currently it is very messed up
+    - [ ] Trainer uses fixed hyperparms
+    - [ ] Trainer me might need to apply some ops on training data
+    - [ ] 
+
 
 
