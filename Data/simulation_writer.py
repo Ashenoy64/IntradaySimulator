@@ -6,7 +6,7 @@ from datetime import datetime
 from typing import Optional, List
 from Settings import SIMULATION_RESULTS_PATH
 
-def writer( name:str, runner:Runner, disable_time:bool = False, disable_metric: bool = False ):
+def writer( name:str, runner:Runner, disable_time:bool = False, disable_metric: bool = False, subpath:str = "" ):
     if not os.path.exists( SIMULATION_RESULTS_PATH ):
         os.mkdir( SIMULATION_RESULTS_PATH )
 
@@ -33,7 +33,7 @@ def writer( name:str, runner:Runner, disable_time:bool = False, disable_metric: 
     action_history = runner.getActionHistory()
     data_history = runner.getDataHistory()
 
-    path = os.path.join( SIMULATION_RESULTS_PATH, name + ".csv" )
+    path = os.path.join( SIMULATION_RESULTS_PATH, subpath, name + ".csv" )
     fp = open( path, 'w' , newline='' )
     wr = csv.DictWriter( fp, fieldnames = field_names + metric_names )
     wr.writeheader()

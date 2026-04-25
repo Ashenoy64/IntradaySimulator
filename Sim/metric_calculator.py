@@ -4,7 +4,6 @@ from typing import Union
 
 
 class MetricCalculator:
-
     def __init__(self):
         self.metrics: list[Union[MultiMetricsBase, SingleMetricsBase]] = []
         self.metricHistory = []
