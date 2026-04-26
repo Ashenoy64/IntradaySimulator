@@ -41,6 +41,19 @@ runner also maintains an history of data seen, and action performed.
 `action_ranker` This will rank the action the algorithm performed.
 Action ranker ranks each action taken withing a range from 0 to 1, Rank labler lables them approprieatly
 
+`Operations` On the collected data we might want apply some set of operations before merging 
+all the simulated results, for example you might want to remove the volume column, or add a 
+new column for the metric which was not added by algorithm or yourself before running the 
+sim, modify the column to percentage change, shift the column by one value. You can chain 
+these operation and let the collector apply it and merge them.
+
+`data_formatter` This is responsilble to read format combine and storing of the simulated 
+sets of results for training purposes
+
+`Scaler` Wrapper around sklearn scaler it is done to interface with exisiting system.
+
+`Trainer` Also an wrapper around the model trainer
+
 
 
 
@@ -48,9 +61,6 @@ Action ranker ranks each action taken withing a range from 0 to 1, Rank labler l
     - [ ] Clean Up
     - [ ] Fix inconsistent formatting across the code
         - [ ]  Variable naming
-    - [ ] Trainer uses fixed hyperparms
-    - [ ] Trainer me might need to apply some ops on training data
-    - [ ] 
 
 
 

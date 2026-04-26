@@ -26,12 +26,20 @@ class RandomForestDecider( TrainerBase ):
             self.X_test = self.scaler.transform( self.X_test )
 
         self.model = RandomForestClassifier(
-            n_estimators = 100,
-            max_depth = None,
+            n_estimators = self.modelParams.get( 'n_estimators',100 ),
+            max_depth = self.modelParams.get( 'max_depth', None ),
             random_state = self.random_seed,
-            n_jobs = -1
+            n_jobs = self.modelParams.get( 'n_jobs', -1 )
         )
         self.model.fit( self.X_train, self.y_train )
+
+    def setModelHyperParams( self,
+                    n_estimators:str = 100,
+                    max_depth:int|None = None,
+                    n_jobs:int = -1 ):
+        self.modelParams["n_estimators"] = n_estimators
+        self.modelParams["max_depth"] = max_depth
+        self.modelParams["n_jobs"] = n_jobs
 
     def test( self ) -> Dict[str, float]:
         preds = self.model.predict( self.X_test )
@@ -57,12 +65,23 @@ class SVRPredictor( TrainerBase ):
             self.X_test = self.scaler.transform( self.X_test )
 
         self.model = SVR(
-            kernel = "rbf",
-            C = 100,
-            gamma = 0.1,
-            epsilon = 0.1
+            kernel = self.modelParams.get( 'kernel', 'rbf' ),
+            C =  self.modelParams.get( 'c', 100 ),
+            gamma = self.modelParams.get( 'gamma', 0.1 ),
+            epsilon = self.modelParams.get( 'epsilon', 0.1 )
         )
         self.model.fit( self.X_train, self.y_train )
+    
+    def setModelHyperParams( self,
+                    kernel:str = 'rbf',
+                    c:int = 100,
+                    gamma:float = 0.1,
+                    epsilon:float = 0.1 ):
+        self.modelParams["kernel"] = kernel
+        self.modelParams["c"] = c
+        self.modelParams["gamma"] = gamma
+        self.modelParams["epsilon"] = epsilon
+
 
     def test( self ) -> Dict[ str, float ]:
         preds = self.model.predict( self.X_test )

@@ -145,6 +145,7 @@ class TrainerBase:
 
         self.base_dir = MODELS_STORE_PATH
         self.cols = X.columns
+        self.modelParams = {}
 
     def train( self ) -> None:
         raise NotImplementedError()
